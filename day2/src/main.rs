@@ -68,17 +68,20 @@ fn get_move(input: Vec<&str>) -> &str {
 }
 
 fn calculate_winner(elf_move: &str, player_move: &str) -> MatchResult {
+    let result;
     if (elf_move == "A" && player_move == "Y")
         || (elf_move == "B" && player_move == "Z")
         || (elf_move == "C" && player_move == "X")
     {
-        return MatchResult::WIN;
+        result = MatchResult::WIN;
     } else if (elf_move == "A" && player_move == "X")
         || (elf_move == "B" && player_move == "Y")
         || (elf_move == "C" && player_move == "Z")
     {
-        return MatchResult::DRAW;
+        result = MatchResult::DRAW;
+    } else {
+        result = MatchResult::LOSE
     }
 
-    MatchResult::LOSE
+    result
 }

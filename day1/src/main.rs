@@ -48,13 +48,17 @@ fn get_calories(calories: &str) -> i32 {
 }
 
 fn get_top_three(current: i32, first: i32, second: i32, third: i32) -> (i32, i32, i32) {
+    let top_three: (i32, i32, i32);
+
     if current > first {
-        return (current, first, second);
+        top_three = (current, first, second);
     } else if current > second {
-        return (first, current, second);
+        top_three = (first, current, second);
     } else if current > third {
-        return (first, second, current);
+        top_three = (first, second, current);
+    } else {
+        top_three = (first, second, third)
     }
 
-    (first, second, third)
+    top_three
 }
