@@ -1,7 +1,13 @@
 use std::fs;
 
-const DRAW: i32 = 3;
-const WIN: i32 = 6;
+const DRAW_POINTS: i32 = 3;
+const WIN_POINTS: i32 = 6;
+
+enum MatchResult {
+    WIN,
+    DRAW,
+    LOSE,
+}
 
 fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
@@ -32,46 +38,47 @@ fn part_two(input: String) {
 }
 
 fn get_points(moves: Vec<&str>) -> i32 {
-    let points: i32 = if moves[1] == "X" {
-        1
-    } else if moves[1] == "Y" {
-        2
-    } else {
-        3
+    let points:i32 = match moves[1] {
+        "X" => 1,
+        "Y" => 2,
+        _ => 3,
     };
-    if (moves[0] == "A" && moves[1] == "Y")
-        || (moves[0] == "B" && moves[1] == "Z")
-        || (moves[0] == "C" && moves[1] == "X")
-    {
-        return points + WIN;
-    } else if (moves[0] == "A" && moves[1] == "X")
-        || (moves[0] == "B" && moves[1] == "Y")
-        || (moves[0] == "C" && moves[1] == "Z")
-    {
-        return points + DRAW;
-    }
 
-    return points;
+    return match calculate_winner(moves[0], moves[1]) {
+        MatchResult::WIN => points + WIN_POINTS,
+        MatchResult::DRAW => points + DRAW_POINTS,
+        MatchResult::LOSE => points,
+    };
 }
 
 fn get_move(input: Vec<&str>) -> &str {
-    if input[0] == "A" {
-        if input[1] == "X" {
-            return "Z";
-        } else if input[1] == "Y" {
-            return "X";
-        } else {
-            return "Y";
-        }
-    } else if input[0] == "B" {
-        return input[1];
-    } else {
-        if input[1] == "X" {
-            return "Y";
-        } else if input[1] == "Y" {
-            return "Z";
-        } else {
-            return "X";
-        }
+    return match input[0] {
+        "A" => match input[1] {
+            "X" => "Z",
+            "Y" => "X",
+            _ => "Y",
+        },
+        "C" => match input[1] {
+            "X" => "Y",
+            "Y" => "Z",
+            _ => "X",
+        },
+        _ => input[1],
     }
+}
+
+fn calculate_winner(elf_move: &str, player_move: &str) -> MatchResult {
+    if (elf_move == "A" && player_move == "Y")
+        || (elf_move == "B" && player_move == "Z")
+        || (elf_move == "C" && player_move == "X")
+    {
+        return MatchResult::WIN;
+    } else if (elf_move == "A" && player_move == "X")
+        || (elf_move == "B" && player_move == "Y")
+        || (elf_move == "C" && player_move == "Z")
+    {
+        return MatchResult::DRAW;
+    }
+
+    return MatchResult::LOSE;
 }
