@@ -24,7 +24,7 @@ fn part_one(input: String) -> u32 {
         }
     }
 
-    return priorities;
+    priorities
 }
 
 fn part_two(input: String) -> u32 {
@@ -43,13 +43,16 @@ fn part_two(input: String) -> u32 {
         }
     }
 
-    return priorities;
+    priorities
 }
 
 fn calculate_priority(item_type: char) -> u32 {
+    let priority;
     if item_type < 'a' {
-        return item_type as u32 - 'A' as u32 + 27;
+        priority = item_type as u32 - 'A' as u32 + 27
+    } else {
+        priority = item_type as u32 - 'a' as u32 + 1;
     }
 
-    return item_type as u32 - 'a' as u32 + 1;
+    priority
 }

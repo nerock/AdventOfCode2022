@@ -21,7 +21,7 @@ fn part_one(input: String) -> i32 {
         }
     }
 
-    return most_calories;
+    most_calories
 }
 
 fn part_two(input: String) -> (i32, i32, i32) {
@@ -40,11 +40,11 @@ fn part_two(input: String) -> (i32, i32, i32) {
         }
     }
 
-    return (first, second, third);
+    (first, second, third)
 }
 
 fn get_calories(calories: &str) -> i32 {
-    return calories.parse().expect("should be a number")
+    calories.parse().expect("should be a number")
 }
 
 fn get_top_three(current: i32, first: i32, second: i32, third: i32) -> (i32, i32, i32) {
@@ -56,5 +56,5 @@ fn get_top_three(current: i32, first: i32, second: i32, third: i32) -> (i32, i32
         return (first, second, current);
     }
 
-    return (first, second, third);
+    (first, second, third)
 }

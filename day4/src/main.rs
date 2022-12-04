@@ -25,7 +25,7 @@ fn part_one(input: String) -> u32 {
         }
     }
 
-    return fully_contained;
+    fully_contained
 }
 
 fn part_two(input: String) -> u32 {
@@ -47,7 +47,7 @@ fn part_two(input: String) -> u32 {
         }
     }
 
-    return overlap;
+    overlap
 }
 
 fn get_pairs(pair: &str) -> (Range, Range) {
@@ -59,7 +59,7 @@ fn get_pairs(pair: &str) -> (Range, Range) {
     let (start, end) = get_range_start_end(pair[1]);
     let second = Range { start, end };
 
-    return (first, second);
+    (first, second)
 }
 
 fn get_range_start_end(range: &str) -> (i32, i32) {
@@ -67,5 +67,5 @@ fn get_range_start_end(range: &str) -> (i32, i32) {
     let start = range[0].parse().expect("Should be a valid number");
     let end = range[1].parse().expect("Should be a valid number");
 
-    return (start, end);
+    (start, end)
 }

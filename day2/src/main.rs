@@ -12,20 +12,20 @@ enum MatchResult {
 fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
-    part_one(input.clone());
-    part_two(input.clone());
+    println!("{}", part_one(input.clone()));
+    println!("{}", part_two(input.clone()));
 }
 
-fn part_one(input: String) {
+fn part_one(input: String) -> i32 {
     let mut points: i32 = 0;
     for line in input.split("\n") {
         points += get_points(line.split_whitespace().collect());
     }
 
-    println!("{points}");
+    points
 }
 
-fn part_two(input: String) {
+fn part_two(input: String) -> i32 {
     let mut points: i32 = 0;
     for line in input.split("\n") {
         let moves: Vec<&str> = line.split_whitespace().collect();
@@ -34,7 +34,7 @@ fn part_two(input: String) {
         points += get_points(vec![elf_move, correct_move]);
     }
 
-    println!("{points}");
+    points
 }
 
 fn get_points(moves: Vec<&str>) -> i32 {
@@ -44,15 +44,15 @@ fn get_points(moves: Vec<&str>) -> i32 {
         _ => 3,
     };
 
-    return match calculate_winner(moves[0], moves[1]) {
+    match calculate_winner(moves[0], moves[1]) {
         MatchResult::WIN => points + WIN_POINTS,
         MatchResult::DRAW => points + DRAW_POINTS,
         MatchResult::LOSE => points,
-    };
+    }
 }
 
 fn get_move(input: Vec<&str>) -> &str {
-    return match input[0] {
+    match input[0] {
         "A" => match input[1] {
             "X" => "Z",
             "Y" => "X",
@@ -80,5 +80,5 @@ fn calculate_winner(elf_move: &str, player_move: &str) -> MatchResult {
         return MatchResult::DRAW;
     }
 
-    return MatchResult::LOSE;
+    MatchResult::LOSE
 }
