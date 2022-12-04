@@ -5,7 +5,6 @@ struct Range {
     end: i32,
 }
 
-
 fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
@@ -20,8 +19,9 @@ fn part_one(input: String) -> u32 {
         let (first, second) = get_pairs(pair);
 
         if (first.start <= second.start && first.end >= second.end)
-            || (second.start <= first.start && second.end >= first.end) {
-            fully_contained+=1;
+            || (second.start <= first.start && second.end >= first.end)
+        {
+            fully_contained += 1;
         }
     }
 
@@ -34,13 +34,16 @@ fn part_two(input: String) -> u32 {
     for pair in input.split("\n") {
         let (first, second) = get_pairs(pair);
 
-        if first.start == second.start || first.start == second.end
-            || first.end == second.start || first.end == second.end {
-            overlap+=1;
+        if first.start == second.start
+            || first.start == second.end
+            || first.end == second.start
+            || first.end == second.end
+        {
+            overlap += 1;
         } else if first.start < second.start && first.end >= second.start {
-            overlap+=1;
+            overlap += 1;
         } else if first.start > second.start && first.start <= second.end {
-            overlap+=1;
+            overlap += 1;
         }
     }
 
@@ -50,20 +53,13 @@ fn part_two(input: String) -> u32 {
 fn get_pairs(pair: &str) -> (Range, Range) {
     let pair: Vec<&str> = pair.split(",").collect();
 
-        let (start, end) = get_range_start_end(pair[0]);
-        let first = Range {
-            start: start,
-            end: end,
-        };
+    let (start, end) = get_range_start_end(pair[0]);
+    let first = Range { start, end };
 
+    let (start, end) = get_range_start_end(pair[1]);
+    let second = Range { start, end };
 
-        let (start, end) = get_range_start_end(pair[1]);
-        let second = Range {
-            start: start,
-            end: end,
-        };
-
-        return (first, second);
+    return (first, second);
 }
 
 fn get_range_start_end(range: &str) -> (i32, i32) {

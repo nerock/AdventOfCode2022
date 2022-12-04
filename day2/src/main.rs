@@ -4,9 +4,8 @@ const DRAW: i32 = 3;
 const WIN: i32 = 6;
 
 fn main() {
-    let input = fs::read_to_string("input.txt").
-    expect("Should have been able to read the input");
-    
+    let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
+
     part_one(input.clone());
     part_two(input.clone());
 }
@@ -33,10 +32,22 @@ fn part_two(input: String) {
 }
 
 fn get_points(moves: Vec<&str>) -> i32 {
-    let points: i32 = if moves[1] == "X" { 1 } else if moves[1] == "Y" { 2 } else { 3 };
-    if (moves[0] == "A" && moves[1] == "Y") || (moves[0] == "B" && moves[1] == "Z") || (moves[0] == "C" && moves[1] == "X") {
+    let points: i32 = if moves[1] == "X" {
+        1
+    } else if moves[1] == "Y" {
+        2
+    } else {
+        3
+    };
+    if (moves[0] == "A" && moves[1] == "Y")
+        || (moves[0] == "B" && moves[1] == "Z")
+        || (moves[0] == "C" && moves[1] == "X")
+    {
         return points + WIN;
-    } else if (moves[0] == "A" && moves[1] == "X") || (moves[0] == "B" && moves[1] == "Y") || (moves[0] == "C" && moves[1] == "Z") {
+    } else if (moves[0] == "A" && moves[1] == "X")
+        || (moves[0] == "B" && moves[1] == "Y")
+        || (moves[0] == "C" && moves[1] == "Z")
+    {
         return points + DRAW;
     }
 
@@ -53,7 +64,7 @@ fn get_move(input: Vec<&str>) -> &str {
             return "Y";
         }
     } else if input[0] == "B" {
-       return input[1];
+        return input[1];
     } else {
         if input[1] == "X" {
             return "Y";
