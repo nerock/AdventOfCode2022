@@ -1,71 +1,92 @@
 use std::fs;
 
-struct Range {
-    start: i32,
-    end: i32,
-}
-
 fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
     println!("{}", part_one(input.clone()));
-    println!("{}", part_two(input.clone()));
 }
 
-fn part_one(input: String) -> u32 {
-    let mut fully_contained = 0;
+fn part_one(input: String) -> String {
+    let (stacks, instructions, number_stacks) = split_stacks_instructions(input);
 
-    for pair in input.split("\n") {
-        let (first, second) = get_pairs(pair);
+    let mut stacks = get_stacks(stacks, number_stacks);
+    stacks = move_stacks(stacks, instructions);
 
-        if (first.start <= second.start && first.end >= second.end)
-            || (second.start <= first.start && second.end >= first.end)
-        {
-            fully_contained += 1;
+    let mut top = String::new();
+    for stack in stacks {
+        top.push(*stack.last().unwrap());
+    }
+
+    top
+}
+
+fn split_stacks_instructions(input: String) -> (Vec<String>, Vec<String>, usize) {
+    let input: Vec<&str> = input.split("\n\n").collect();
+
+    let number_stacks: Vec<&str> = input[0].split("\n").collect();
+    let number_stacks = number_stacks[number_stacks.len()-1];
+    let num = number_stacks.chars().nth(number_stacks.len()-1).unwrap();
+    let last_num = num.to_digit(10).unwrap();
+
+    let mut stacks: Vec<String> = input[0].split("\n").map(String::from).collect();
+    stacks.pop();
+    let instructions = input[1].split("\n").map(String::from).collect();
+
+    (stacks, instructions, last_num as usize)
+}
+
+fn get_stacks(input: Vec<String>, n: usize) -> Vec<Vec<char>> {
+    let mut stacks: Vec<Vec<char>> = vec![Vec::new(); n];
+    for line in input {
+        let mut debug = String::new();
+        let mut stack = 0;
+        let mut spaces = 1;
+        for elf_crate in line.chars() {
+            debug.push(elf_crate);
+            match elf_crate {
+                ' ' => {
+                    spaces += 1;
+                    if spaces == 4 {
+                        stack += 1;
+                        spaces = 0;
+                    }
+                },
+                '[' | ']' => {},
+                _ => {
+                    stacks[stack].push(elf_crate);
+                    stack+=1;
+                    spaces=0;
+                },
+            }
         }
     }
 
-    fully_contained
+    for stack in &mut stacks {
+        stack.reverse();
+    }
+
+    stacks
 }
 
-fn part_two(input: String) -> u32 {
-    let mut overlap = 0;
+fn move_stacks(stacks: Vec<Vec<char>>, instructions: Vec<String>) -> Vec<Vec<char>> {
+    let mut stacks = stacks;
+    for instruction in instructions {
+        let (amount, from, to) = parse_instruction(instruction);
 
-    for pair in input.split("\n") {
-        let (first, second) = get_pairs(pair);
-
-        if first.start == second.start
-            || first.start == second.end
-            || first.end == second.start
-            || first.end == second.end
-        {
-            overlap += 1;
-        } else if first.start < second.start && first.end >= second.start {
-            overlap += 1;
-        } else if first.start > second.start && first.start <= second.end {
-            overlap += 1;
+        for _ in 0..amount {
+            let to_move = stacks[from-1].pop().unwrap();
+            stacks[to-1].push(to_move);
         }
     }
 
-    overlap
+    stacks
 }
 
-fn get_pairs(pair: &str) -> (Range, Range) {
-    let pair: Vec<&str> = pair.split(",").collect();
+fn parse_instruction(instruction: String) -> (i32, usize, usize) {
+    let instruction:Vec<&str> = instruction.split(" ").collect();
+    let amount: i32 = instruction[1].parse().unwrap();
+    let from: usize = instruction[3].parse().unwrap();
+    let to: usize = instruction[5].parse().unwrap();
 
-    let (start, end) = get_range_start_end(pair[0]);
-    let first = Range { start, end };
-
-    let (start, end) = get_range_start_end(pair[1]);
-    let second = Range { start, end };
-
-    (first, second)
-}
-
-fn get_range_start_end(range: &str) -> (i32, i32) {
-    let range: Vec<&str> = range.split("-").collect();
-    let start = range[0].parse().expect("Should be a valid number");
-    let end = range[1].parse().expect("Should be a valid number");
-
-    (start, end)
+    (amount, from, to)
 }
