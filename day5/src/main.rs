@@ -4,6 +4,7 @@ fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
     println!("{}", part_one(input.clone()));
+    println!("{}", part_two(input.clone()));
 }
 
 fn part_one(input: String) -> String {
@@ -11,6 +12,20 @@ fn part_one(input: String) -> String {
 
     let mut stacks = get_stacks(stacks, number_stacks);
     stacks = move_stacks(stacks, instructions);
+
+    let mut top = String::new();
+    for stack in stacks {
+        top.push(*stack.last().unwrap());
+    }
+
+    top
+}
+
+fn part_two(input: String) -> String {
+    let (stacks, instructions, number_stacks) = split_stacks_instructions(input);
+
+    let mut stacks = get_stacks(stacks, number_stacks);
+    stacks = move_multiple_stacks(stacks, instructions);
 
     let mut top = String::new();
     for stack in stacks {
@@ -76,6 +91,26 @@ fn move_stacks(stacks: Vec<Vec<char>>, instructions: Vec<String>) -> Vec<Vec<cha
         for _ in 0..amount {
             let to_move = stacks[from-1].pop().unwrap();
             stacks[to-1].push(to_move);
+        }
+    }
+
+    stacks
+}
+
+fn move_multiple_stacks(stacks: Vec<Vec<char>>, instructions: Vec<String>) -> Vec<Vec<char>> {
+    let mut stacks = stacks;
+    for instruction in instructions {
+        let (amount, from, to) = parse_instruction(instruction);
+
+        let mut to_move_stack = Vec::new();
+        for _ in 0..amount {
+            let to_move_crate = stacks[from-1].pop().unwrap();
+            to_move_stack.push(to_move_crate);
+        }
+
+        to_move_stack.reverse();
+        for to_move_crate in to_move_stack {
+            stacks[to-1].push(to_move_crate);
         }
     }
 
