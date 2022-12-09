@@ -97,19 +97,8 @@ fn calculate_movement(head: &Pos, tail: &Pos) -> Pos {
         return *tail
     }
 
-    let mut new_pos = Pos{x: tail.x, y: tail.y};
-
-    if head.x < tail.x {
-        new_pos.x -= 1
-    } else if head.x > tail.x {
-        new_pos.x += 1
+    Pos{
+        x: if head.x < tail.x { tail.x - 1} else if head.x > tail.x { tail.x + 1} else { tail.x },
+        y: if head.y < tail.y { tail.y - 1} else if head.y > tail.y { tail.y + 1} else { tail.y }
     }
-
-    if head.y < tail.y {
-        new_pos.y -= 1
-    } else if head.y > tail.y {
-        new_pos.y += 1
-    }
-
-    new_pos
 }
