@@ -18,6 +18,7 @@ fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
     println!("{}", part_one(input.clone()));
+    println!("{}", part_two(input.clone()));
 }
 
 fn part_one(input: String) -> usize {
@@ -27,7 +28,6 @@ fn part_one(input: String) -> usize {
     let mut visited_locations = HashSet::new();
     visited_locations.insert((tail.x, tail.y));
 
-    let mut past_head = Pos{x: head.x, y: head.y};
     for move_line in input.lines() {
         let (dir, amount) = parse_move(move_line);
         for _ in 0..amount {
@@ -38,12 +38,36 @@ fn part_one(input: String) -> usize {
                 Direction::RIGHT => head.x += 1,
             }
 
-            if !is_touching(&head, &tail) {
-                tail = past_head;
-            }
-            past_head = head;
-
+            tail = calculate_movement(&head, &tail);
             visited_locations.insert((tail.x, tail.y));
+        }
+    }
+
+    visited_locations.len()
+}
+
+
+fn part_two(input: String) -> usize {
+    let mut knots = vec![Pos{x: 0, y: 0}; 10];
+
+    let mut visited_locations = HashSet::new();
+    visited_locations.insert((0, 0));
+
+    for move_line in input.lines() {
+        let (dir, amount) = parse_move(move_line);
+        for _ in 0..amount {
+            match dir {
+                Direction::UP => knots[0].y += 1,
+                Direction::DOWN => knots[0].y -= 1,
+                Direction::LEFT => knots[0].x -= 1,
+                Direction::RIGHT => knots[0].x += 1,
+            }
+
+            for i in 1..knots.len() {
+                knots[i] = calculate_movement(&knots[i-1], &knots[i]);
+            }
+
+            visited_locations.insert((knots[9].x, knots[9].y));
         }
     }
 
@@ -66,4 +90,26 @@ fn is_touching(head: &Pos, tail: &Pos) -> bool {
     let distance_y = if head.y - tail.y < 0 { (head.y - tail.y) * -1 } else { head.y - tail.y };
 
     if distance_x <= 1 && distance_y <= 1 { true } else { false }
+}
+
+fn calculate_movement(head: &Pos, tail: &Pos) -> Pos {
+    if is_touching(head, tail) {
+        return *tail
+    }
+
+    let mut new_pos = Pos{x: tail.x, y: tail.y};
+
+    if head.x < tail.x {
+        new_pos.x -= 1
+    } else if head.x > tail.x {
+        new_pos.x += 1
+    }
+
+    if head.y < tail.y {
+        new_pos.y -= 1
+    } else if head.y > tail.y {
+        new_pos.y += 1
+    }
+
+    new_pos
 }
