@@ -24,12 +24,28 @@ fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
     println!("{}", part_one(&input));
+    println!("{}", part_two(&input));
 }
 
 fn part_one(input: &str) -> u16 {
     let hmap = parse_heightmap(input);
 
     shortest_path(&hmap, hmap.starting_position.clone()).unwrap_or(0)
+}
+
+fn part_two(input: &str) -> u16 {
+    let hmap = parse_heightmap(input);
+    let mut distances = Vec::new();
+
+    for i in 0..hmap.map.len() {
+        for j in 0..hmap.map[0].len() {
+            if hmap.map[i][j] == 0 {
+                distances.push(shortest_path(&hmap, Point{x: j, y: i}).unwrap_or(u16::MAX))
+            }
+        }
+    }
+
+    *distances.iter().min().unwrap()
 }
 
 fn shortest_path(hmap: &Heightmap, current_position: Point) -> Option<u16> {
