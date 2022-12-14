@@ -14,16 +14,6 @@ impl Item {
         match self {
             Item::Number(n) => format!("{n}"),
             Item::List(l) => {
-               /* print!("[");
-                let mut items = "";
-                for (i, item) in l.iter().enumerate() {
-                    item.to_string();
-                    if i != l.len()-1 {
-                        print!(",")
-                    }
-                }
-                print!("]");*/
-
                 let items = l.iter().map(|i| i.to_string()).collect::<Vec<String>>().join(",");
                 format!("[{}]", items)
             }
