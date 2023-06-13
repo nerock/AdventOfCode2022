@@ -2,21 +2,51 @@ use std::fs;
 
 const AIR: char = '.';
 const ROCK: char = '#';
-const SAND: char = '+';
+const SAND: char = 'o';
 const SAND_START: (usize, usize) = (500, 0);
 
 fn main() {
     let input = fs::read_to_string("input.txt").expect("Should have been able to read the input");
 
     println!("{}", part_one(&input));
+    println!("{}", part_two(&input));
 }
 
 fn part_one(input: &str) -> u16 {
     let (grid, resting) = fall(parse(input));
 
+    /*for i in 0..grid.len() {
+        for j in 0..grid[i].len() {
+            if j > 490 {
+                print!("{}", grid[i][j])
+            }
+        }
+
+        println!()
+    }*/
+
     resting
 }
 
+fn part_two(input: &str) -> u16 {
+    let mut grid = parse(input);
+    grid.push(vec![AIR; grid.last().unwrap().len()]);
+    grid.push(vec![ROCK; grid.last().unwrap().len()]);
+
+    let (grid, resting) = fall_two(grid);
+    for i in 0..grid.len() {
+        for j in 0..grid[i].len() {
+            if j > 488 {
+                print!("{}", grid[i][j])
+            }
+        }
+
+        println!()
+    }
+
+
+    resting
+}
 
 fn parse(input: &str) -> Vec<Vec<char>> {
     let mut grid = Vec::new();
@@ -84,8 +114,47 @@ fn fall(mut grid: Vec<Vec<char>>) -> (Vec<Vec<char>>, u16) {
         } else {
             grid[y][x] = SAND;
             (x, y) = SAND_START;
-            resting += 1
+            resting += 1;
         }
+    }
+
+    (grid, resting)
+}
+
+fn fall_two(mut grid: Vec<Vec<char>>) -> (Vec<Vec<char>>, u16) {
+    let (mut x, mut y) = SAND_START;
+    let mut resting = 0;
+
+    loop {
+        if y+1 == grid.len()-1 {
+            grid[y][x] = SAND;
+            if (x, y) == SAND_START {
+                break
+            }
+            (x, y) = SAND_START;
+            resting += 1;
+        }
+        if x+1 == grid[y].len() {
+            grid = extend_vec(grid, (x+1) as i32, 0)
+        }
+
+        if grid[y+1][x] == AIR {
+            y+=1
+        } else if x == 0 {
+            break
+        } else if grid[y+1][x-1] == AIR {
+            x-=1
+        } else if grid[y+1][x+1] == AIR {
+            x+=1
+        } else {
+            grid[y][x] = SAND;
+            resting += 1;
+            if (x, y) == SAND_START {
+                break
+            }
+            (x, y) = SAND_START;
+        }
+
     }
 
     (grid, resting)
@@ -98,14 +167,14 @@ fn extend_vec(mut grid: Vec<Vec<char>>, x: i32, y: i32) -> Vec<Vec<char>> {
 
     if y >= grid.len() {
         for _ in 0..(y-grid.len())+1 {
-            grid.push(vec!['.'; x+1])
+            grid.push(vec![AIR; x+1])
         }
     }
 
     for i in 0..grid.len() {
         if x >= grid[i].len() {
             for _ in 0..(x-grid[i].len())+1 {
-                grid[i].push('.')
+                grid[i].push(AIR)
             }
         }
     }
